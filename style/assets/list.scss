@@ -1,0 +1,30 @@
+@import "./variables.scss";
+
+.emmet-re-view__list {
+    display: block;
+    padding: 0;
+    list-style-type: none;
+    margin: 0;
+    max-height: 100%;
+    overflow: auto;
+    @include default-font;
+
+    &-item {
+        padding: 7px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:not([class*='selected']):hover {
+            color: #000;
+            background: #D8FDF6;
+        }
+
+        &_selected {
+            background: #DCDCDC;
+            box-shadow: inset 2px 2px 9px 0px rgba(0,0,0,0.3);
+            color: #757575;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.50);
+        }
+    }
+}

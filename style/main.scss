@@ -1,0 +1,111 @@
+@import "./assets/variables.scss";
+@import "./assets/switcher.scss";
+@import "./assets/picker.scss";
+@import "./assets/list.scss";
+@import "./assets/popup.scss";
+@import "./assets/button.scss";
+
+.emmet-re-view {
+    &__header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        line-height: 1;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &-content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        &-icons {
+            width: 16px;
+            margin: -5px 0;
+        }
+    }
+
+    &__logo {
+        @include default-font;
+        font-style: normal;
+        color: #000;
+        display: inline-block;
+        font-size: 32px;
+        margin: 0 10px 0 0;
+        padding: 0;
+
+        &-version {
+            color: #d4d4d4;
+        }
+    }
+
+    &__carbon {
+        height: 100px;
+    }
+
+    &__icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        opacity: 0.3;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        &_help {
+            background: url('/img/help-icon.svg');
+        }
+
+        &_settings {
+            background: url('/img/settings-icon.svg');
+            margin-bottom: 4px;
+        }
+    }
+
+    &__devices {
+        display: flex;
+        $width: 700px;
+        $padding: 0px;
+        width: $width;
+        padding: $padding;
+        font-size: 13px;
+        top: 100px;
+        left: 50%;
+        margin-left: -$width / 2 - $padding;
+    }
+
+    &__section {
+        width: 50%;
+        box-sizing: border-box;
+        @include default-font;
+        padding: 20px;
+        min-height: 300px;
+        position: relative;
+
+        &-title {
+            font-weight: 200;
+            color: #000;
+            font-size: 24px;
+            margin: 0 0 10px;
+            text-align: center;
+        }
+
+        &-footer {
+            text-align: center;
+            position: relative;
+            padding: 10px 0 0;
+            margin: 0;
+        }
+
+        .emmet-re-view__list {
+            max-height: 350px;
+        }
+    }
+}

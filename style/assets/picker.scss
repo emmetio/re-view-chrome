@@ -1,0 +1,20 @@
+@import "./variables.scss";
+
+.emmet-re-view__picker {
+    @include default-font;
+    @include toggler;
+    border-radius: 15px;
+    margin: 0 20px 0 0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::after {
+        content: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSIxNCIgdmlld0JveD0iMCAwIDggMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgPjxnIHN0cm9rZT0iIzk3OTc5NyIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTQgMGw0IDUuNWgtOHoiLz48cGF0aCBkPSJNNCAxNGwtNC01LjVoOHoiLz48L2c+PC9zdmc+Cg==');
+        display: inline-block;
+        position: relative;
+        top: 2px;
+        left: 7px;
+    }
+}

@@ -1,0 +1,37 @@
+@import "./variables.scss";
+
+.emmet-re-view__switcher {
+    display: block;
+    list-style-type: none;
+    margin: 0 20px 0 0;
+    padding: 0;
+    @include default-font;
+    display: flex;
+
+    &-item {
+        display: inline-block;
+        @include toggler;
+
+        &:not(:first-child) {
+            border-left-width: 0;
+        }
+
+        &:first-child {
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+
+        &:last-child {
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        &_selected {
+            background: #DCDCDC;
+            box-shadow: inset 2px 2px 9px 0px rgba(0,0,0,0.41);
+            color: #757575;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.50);
+            cursor: default;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "re-view-chrome",
+  "version": "2.0.0",
+  "description": "Emmet Re:view extension for Google Chrome",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emmetio/re-view-chrome.git"
+  },
+  "keywords": [
+    "responsive",
+    "design",
+    "mobile",
+    "view"
+  ],
+  "author": "Sergey Chikuyonok <serge.che@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emmetio/re-view-chrome/issues"
+  },
+  "homepage": "https://github.com/emmetio/re-view-chrome",
+  "dependencies": {
+    "livestyle-re-view": "livestyle/re-view"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.1.1"
+  }
+}
