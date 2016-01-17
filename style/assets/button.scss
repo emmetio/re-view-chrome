@@ -1,5 +1,21 @@
 @import "./variables.scss";
 
 .emmet-re-view__button {
+    -webkit-appearance: none;
     appearance: none;
+    border: 0;
+    display: inline-block;
+    padding: 8px 15px;
+    font-family: $main-font;
+    font-size: 14px;
+    color: $main-color;
+    background: none;
+    border: 2px solid $main-color;
+    border-radius: 20px;
+    cursor: pointer;
+
+    &:hover {
+        color: $main-color-hl;
+        border-color: $main-color-hl;
+    }
 }
