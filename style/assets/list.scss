@@ -22,6 +22,7 @@
         border-bottom: 1px solid #ddd;
         transition: background-color 0.3s;
         position: relative;
+        overflow: hidden;
 
         &:hover {
             color: #000;

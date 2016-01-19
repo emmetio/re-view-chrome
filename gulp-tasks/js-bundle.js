@@ -12,8 +12,13 @@ const defaultOptions = {
 	detectGlobals: false,
 	babelify: true,
 	babelOptions: {
+		global: true,
 		presets: ['es2015'],
-		plugins: [['transform-react-jsx', {pragma: 'jsx'}]]
+		plugins: [
+			['transform-react-jsx', {pragma: 'jsx'}],
+			'transform-object-rest-spread',
+			'transform-node-env-inline'
+		]
 	}
 };
 
