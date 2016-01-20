@@ -15,7 +15,7 @@ const defaultOptions = {
 		global: true,
 		presets: ['es2015'],
 		plugins: [
-			['transform-react-jsx', {pragma: 'jsx'}],
+			['transform-react-jsx', {pragma: 'tr'}],
 			'transform-object-rest-spread',
 			'transform-node-env-inline'
 		]

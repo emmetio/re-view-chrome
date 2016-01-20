@@ -17,6 +17,8 @@ function devices(state=defaultDeviceState, action) {
             return removeDevice(state, action.id);
         case actions.SELECT_DEVICE:
             return selectDevice(state, action.id);
+        case actions.TOGGLE_DEVICE_SELECTION:
+            return toggleDeviceSelection(state, action.id);
         case actions.CLEAR_DEVICE_SELECTION:
             return clearDeviceSelection(state);
         case actions.SWITCH_DEVICE_LIST_MODE:
@@ -52,7 +54,6 @@ function removeDevice(state, id) {
 }
 
 function selectDevice(state, id) {
-    console.log('select', id);
     let items = state.items;
     if (state.mode !== 'pick-many') {
         items = clearSelection(items);
@@ -75,6 +76,30 @@ function switchDeviceListMode(state, mode='pick-single') {
 
     // reset selection from all items as well
     return {...state, mode, items: clearSelection(state.items)};
+}
+
+function toggleDeviceSelection(state, id) {
+    let device = state.items.filter(item => item.id === id)[0];
+    if (!device) {
+        return state;
+    }
+
+    // if device is not selected, use existing reducer that will
+    // update state according to current edit mode
+    if (!device.selected) {
+        return selectDevice(state, device.id);
+    }
+
+    // otherwise, simply remove selection
+    return {
+        ...state,
+        items: state.items.map(item => {
+            if (item.id === id) {
+                item = {...item, selected: false}
+            }
+            return item;
+        })
+    };
 }
 
 function clearDeviceSelection(state) {

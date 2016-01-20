@@ -21,7 +21,7 @@ gulp.task('script', () => {
 		global: true,
 		debug: false,
 		watch: isWatching
-	}))
+	})).on('error', notify('JavaScript Error'))
     .pipe(gulp.dest('./out'));
 });
 

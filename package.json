@@ -23,13 +23,13 @@
   },
   "homepage": "https://github.com/emmetio/re-view-chrome",
   "dependencies": {
+    "eventemitter3": "^1.1.1",
     "livestyle-re-view": "livestyle/re-view",
     "redux": "^3.0.5",
     "redux-logger": "^2.3.2",
-    "virtual-dom": "^2.1.1"
+    "tiny-react": "sergeche/tiny-react"
   },
   "devDependencies": {
-    "babel-plugin-jsx-factory": "^1.0.1",
     "babel-plugin-transform-node-env-inline": "^6.3.13",
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
     "babel-plugin-transform-react-jsx": "^6.4.0",

@@ -36,6 +36,13 @@ export function selectDevice(id) {
     });
 }
 
+export function toggleDeviceSelection(id) {
+    store.dispatch({
+        type: actions.TOGGLE_DEVICE_SELECTION,
+        id
+    });
+}
+
 export function clearDeviceSelection() {
     store.dispatch({type: actions.SELECT_DEVICE});
 }
