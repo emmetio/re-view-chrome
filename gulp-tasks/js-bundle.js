@@ -9,15 +9,15 @@ const notify = require('./notify');
 const _bundles = {};
 const defaultOptions = {
 	debug: false,
-	detectGlobals: false,
+	detectGlobals: true,
 	babelify: true,
 	babelOptions: {
 		global: true,
-		presets: ['es2015'],
+		presets: [require('babel-preset-es2015')],
 		plugins: [
-			['transform-react-jsx', {pragma: 'tr'}],
-			'transform-object-rest-spread',
-			'transform-node-env-inline'
+			[require('babel-plugin-transform-react-jsx'), {pragma: 'tr'}],
+			require('babel-plugin-transform-object-rest-spread'),
+			require('babel-plugin-transform-node-env-inline')
 		]
 	}
 };

@@ -1,0 +1,17 @@
+[
+    {
+        "id": "apple-phones",
+        "title": "Apple phones",
+        "devices": ["apple-iphone-3gs", "apple-iphone-4", "apple-iphone-5", "apple-iphone-6-plus", "apple-iphone-6"]
+    },
+    {
+        "id": "apple-tablets",
+        "title": "Apple tablets",
+        "devices": ["apple-ipad", "apple-ipad-mini", "apple-ipad-mini-2"]
+    },
+    {
+        "id": "apple-devices",
+        "title": "Apple devices (phones & tablets)",
+        "device": ["apple-iphone-3gs", "apple-iphone-4", "apple-iphone-5", "apple-iphone-6-plus", "apple-iphone-6", "apple-ipad", "apple-ipad-mini", "apple-ipad-mini-2"]
+    }
+]

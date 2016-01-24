@@ -27,7 +27,9 @@
     "livestyle-re-view": "livestyle/re-view",
     "redux": "^3.0.5",
     "redux-logger": "^2.3.2",
-    "tiny-react": "sergeche/tiny-react"
+    "state-machine": "sergeche/state-machine",
+    "tiny-react": "sergeche/tiny-react",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "babel-plugin-transform-node-env-inline": "^6.3.13",
