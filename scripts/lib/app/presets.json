@@ -12,6 +12,6 @@
     {
         "id": "apple-devices",
         "title": "Apple devices (phones & tablets)",
-        "device": ["apple-iphone-3gs", "apple-iphone-4", "apple-iphone-5", "apple-iphone-6-plus", "apple-iphone-6", "apple-ipad", "apple-ipad-mini", "apple-ipad-mini-2"]
+        "devices": ["apple-iphone-3gs", "apple-iphone-4", "apple-iphone-5", "apple-iphone-6-plus", "apple-iphone-6", "apple-ipad", "apple-ipad-mini", "apple-ipad-mini-2"]
     }
 ]

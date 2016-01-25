@@ -1,6 +1,7 @@
 $main-font: 'helvetica neue', helvetica, arial, sans-serif;
 $main-color: #20b89a;
 $main-color-hl: lighten($main-color, 5%);
+$ui-transition-time: 0.3s;
 
 @mixin default-font {
     font-family: $main-font;

@@ -11,6 +11,6 @@ export default tr.component({
             content: item.title
         }));
 
-        return <List mode={props.mode} items={items} onItemClick={props.onItemClick} />;
+        return <List {...props} items={items} />;
     }
 });

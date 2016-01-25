@@ -2,7 +2,7 @@
 
 import tr from 'tiny-react';
 import DeviceWallPicker from './lib/components/device-wall-picker';
-import {store, subscribe} from './lib/app';
+import {store, subscribe, getStateValue} from './lib/app';
 import fsm from './lib/app/device-wall-fsm';
 
 const $ = (sel, ctx=document) => ctx.querySelector(sel);
@@ -13,7 +13,16 @@ $('.emmet-re-view__popup-placeholder').appendChild(mainView.target);
 function makeProps(state) {
     return {
         deviceList: getDeviceList(state),
-        presetList: getPresetList(state)
+        presetList: getPresetList(state),
+        pickerState: state.deviceWallPicker,
+        addDevice,
+        addPreset,
+        onDeviceFormSubmit,
+        onDeviceFormReset,
+        onDeviceFormInput,
+        onPresetFormSubmit,
+        onPresetFormReset,
+        onPresetFormInput
     };
 }
 
@@ -60,9 +69,51 @@ function onDeviceClick(evt) {
     fsm.pickDevice(this.id);
 }
 
+function onDeviceFormSubmit(evt) {
+    evt.preventDefault();
+    console.log('will submit', getStateValue('deviceWallPicker.stateData'));
+    fsm.submitDeviceEdit(getStateValue('deviceWallPicker.stateData'));
+}
+
+function onDeviceFormReset(evt) {
+    evt.preventDefault();
+    fsm.cancelDeviceEdit();
+}
+
+function onDeviceFormInput(evt) {
+    var elem = evt.target;
+    console.log('device input', {[elem.name]: elem.value});
+    fsm.updateDeviceEditData({[elem.name]: elem.value});
+}
+
 function onPresetClick(evt) {
     evt.preventDefault();
     fsm.pickPreset(this.id);
+}
+
+function onPresetFormSubmit(evt) {
+    evt.preventDefault();
+    console.log('will submit', getStateValue('deviceWallPicker.stateData'));
+    fsm.submitPresetEdit(getStateValue('deviceWallPicker.stateData'));
+}
+
+function onPresetFormReset(evt) {
+    evt.preventDefault();
+    fsm.cancelPresetEdit();
+}
+
+function onPresetFormInput(evt) {
+    var elem = evt.target;
+    console.log('preset input', {[elem.name]: elem.value});
+    fsm.updatePresetEditData({[elem.name]: elem.value});
+}
+
+function addDevice() {
+    fsm.addDevice();
+}
+
+function addPreset() {
+    fsm.addPreset();
 }
 
 /**

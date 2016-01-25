@@ -4,6 +4,7 @@
 @import "./assets/list.scss";
 @import "./assets/popup.scss";
 @import "./assets/button.scss";
+@import "./assets/form.scss";
 
 .emmet-re-view {
     &__header {
@@ -86,10 +87,7 @@
         box-sizing: border-box;
         @include default-font;
         padding: 20px;
-        min-height: 300px;
         position: relative;
-        display: flex;
-        flex-direction: column;
 
         &-title {
             font-weight: 200;
@@ -100,18 +98,13 @@
         }
 
         &-content {
-            flex-grow: 1;
-        }
-
-        &-footer {
-            text-align: center;
+            height: 330px;
+            overflow: hidden;
             position: relative;
-            padding: 10px 0 0;
-            margin: 0;
         }
 
         .emmet-re-view__list {
-            max-height: 350px;
+            height: 100%;
         }
     }
 }

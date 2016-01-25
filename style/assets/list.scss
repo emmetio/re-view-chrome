@@ -2,7 +2,7 @@
 
 @mixin pick-many-mode {
     display: inline-block;
-    transition: transform 0.3s;
+    transition: transform $ui-transition-time;
 
     [data-mode="pick-many"] & {
         transform: translateX(20px);
@@ -15,8 +15,14 @@
     list-style-type: none;
     margin: 0;
     max-height: 100%;
+    position: relative;
     overflow: auto;
     @include default-font;
+    transition: transform $ui-transition-time;
+
+    &_hidden {
+        transform: translateY(100%);
+    }
 
     &-item {
         border-bottom: 1px solid #ddd;

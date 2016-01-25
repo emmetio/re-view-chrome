@@ -12,6 +12,6 @@ export default tr.component({
             info: `${item.width}×${item.height}`
         }));
 
-        return <List mode={props.mode} items={items} onItemClick={props.onItemClick} />;
+        return <List {...props} items={items} />;
     }
 });

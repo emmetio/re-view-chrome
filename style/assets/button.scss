@@ -20,3 +20,54 @@
         border-color: $main-color-hl;
     }
 }
+
+.emmet-re-view__icon-add {
+    $size: 15px;
+    $icon-size: 9px;
+    $main-color: #bbb;
+    $hover-color: #fff;
+
+    display: inline-block;
+    border: 1px solid $main-color;
+    width: $size;
+    height: $size;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 100%;
+    font-family: arial, sans-serif;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        background-color: $main-color;
+    }
+
+    &::before {
+        width: $icon-size;
+        height: 1px;
+        left: floor(($size - $icon-size) / 2);
+        top: floor($size / 2);
+    }
+
+    &::after {
+        width: 1px;
+        height: $icon-size;
+        top: floor(($size - $icon-size) / 2);
+        left: floor($size / 2);
+    }
+
+    &:hover {
+        background-color: $main-color;
+        &::before, &::after {
+            background-color: $hover-color;
+        }
+    }
+
+    &_active {
+        transform: rotate(45deg);
+    }
+}
