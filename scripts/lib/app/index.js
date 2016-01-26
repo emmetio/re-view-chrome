@@ -22,8 +22,20 @@ export const store = createStoreWithMiddleware(reducers, {
         }
     },
     user: {
-        devices: [],
-        presets: []
+        devices: [{
+            "id": "942ea870-c47d-11e5-b11f-03099e8ba412",
+            "title": "AAA my dev",
+            "width": "200",
+            "height": "300"
+        }],
+        presets: [{
+            "id": "d2ee7d00-c479-11e5-abe8-abdaf6488318",
+            "title": "Sample",
+            "devices": [
+                "apple-ipad",
+                "amazon-kindle-fire-hdx-8-9"
+            ]
+        }]
     }
 });
 

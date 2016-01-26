@@ -46,7 +46,8 @@ function getDeviceList(state) {
     return {
         mode,
         items,
-        onItemClick: onDeviceClick
+        onItemClick: onDeviceClick,
+        onItemEdit: onDeviceEdit
     };
 }
 
@@ -60,8 +61,13 @@ function getPresetList(state) {
     return {
         mode: 'pick-one',
         items: getItems(state, 'presets', selected),
-        onItemClick: onPresetClick
+        onItemClick: onPresetClick,
+        onItemEdit: onPresetEdit
     };
+}
+
+function addDevice() {
+    fsm.addDevice();
 }
 
 function onDeviceClick(evt) {
@@ -71,7 +77,6 @@ function onDeviceClick(evt) {
 
 function onDeviceFormSubmit(evt) {
     evt.preventDefault();
-    console.log('will submit', getStateValue('deviceWallPicker.stateData'));
     fsm.submitDeviceEdit(getStateValue('deviceWallPicker.stateData'));
 }
 
@@ -80,10 +85,25 @@ function onDeviceFormReset(evt) {
     fsm.cancelDeviceEdit();
 }
 
+function onDeviceEdit(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    var data = parseItemAction(evt.target);
+    if (data.action === 'edit') {
+        fsm.editDevice(data.id);
+    } else if (data.action === 'remove') {
+        fsm.removeDevice(data.id);
+    }
+}
+
 function onDeviceFormInput(evt) {
     var elem = evt.target;
-    console.log('device input', {[elem.name]: elem.value});
     fsm.updateDeviceEditData({[elem.name]: elem.value});
+}
+
+
+function addPreset() {
+    fsm.addPreset();
 }
 
 function onPresetClick(evt) {
@@ -93,7 +113,6 @@ function onPresetClick(evt) {
 
 function onPresetFormSubmit(evt) {
     evt.preventDefault();
-    console.log('will submit', getStateValue('deviceWallPicker.stateData'));
     fsm.submitPresetEdit(getStateValue('deviceWallPicker.stateData'));
 }
 
@@ -104,16 +123,26 @@ function onPresetFormReset(evt) {
 
 function onPresetFormInput(evt) {
     var elem = evt.target;
-    console.log('preset input', {[elem.name]: elem.value});
     fsm.updatePresetEditData({[elem.name]: elem.value});
 }
 
-function addDevice() {
-    fsm.addDevice();
+function onPresetEdit(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    var data = parseItemAction(evt.target);
+    if (data.action === 'edit') {
+        fsm.editPreset(data.id);
+    } else if (data.action === 'remove') {
+        fsm.removePreset(data.id);
+    }
 }
 
-function addPreset() {
-    fsm.addPreset();
+function parseItemAction(data) {
+    if (typeof data !== 'string' && 'nodeType' in data) {
+        data = data.getAttribute('data-action');
+    }
+    var [action, id] = (data || '').split(':');
+    return {action, id};
 }
 
 /**
@@ -132,7 +161,13 @@ function getItems(state, key, selected) {
         selected = [selected];
     }
 
-    return [].concat(userData[key] || [], state[key] || [])
+    var userItems = (userData[key] || []).map(item => ({
+        ...item,
+        userDefined: true,
+        editable: true
+    }));
+
+    return [].concat(userItems, state[key] || [])
     // keep unique items only
     .filter(item => item.id in lookup ? false : lookup[item.id] = true)
     // mark selected items

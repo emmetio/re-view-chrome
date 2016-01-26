@@ -26,7 +26,7 @@
 
     &-item {
         border-bottom: 1px solid #ddd;
-        transition: background-color 0.3s;
+        /* transition: background-color 0.3s; */
         position: relative;
         overflow: hidden;
 
@@ -46,13 +46,84 @@
             display: block;
             padding: 7px;
             cursor: pointer;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            display: flex;
+            justify-content: space-between;
 
             &-inner {
                 @include pick-many-mode;
+                flex-grow: 1;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: inline-block;
+                margin-right: 10px;
             }
         }
+
+        &_user-defined &-label-inner {
+            font-weight: bold;
+        }
+
+        &-info {
+            font-size: 0.85em;
+            color: #aaa;
+            transition: transform 0.3s;
+        }
+
+        &_with-controls:hover &-info {
+            transform: translateY(140%);
+        }
+
+        &-controls {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            white-space: nowrap;
+            transition: transform 0.3s;
+        }
+
+        &_with-controls:hover &-controls {
+            transform: translateY(100%);
+        }
+
+        &-control {
+            $icon-size: 9px;
+            display: inline-block;
+            padding: 4px;
+            border-radius: 100%;
+            border: 1px solid #000;
+            line-height: $icon-size;
+            margin: 6px 4px;
+            cursor: pointer;
+            opacity: 0.7;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &::before {
+                width: $icon-size;
+                height: $icon-size;
+                content: '';
+                display: inline-block;
+                background-size: 100% 100%;
+            }
+
+            &_edit {
+                border-color: #5db198;
+                &::before {
+                    background-image: url(/img/edit.svg);
+                }
+            }
+
+            &_remove {
+                border-color: #e3544a;
+                &::before {
+                    background-image: url(/img/cross.svg);
+                }
+            }
+        }
+
 
         input:checked + &-label {
             background: #DCDCDC;
