@@ -16,7 +16,10 @@ function presets(state={}) {
 function deviceWallPicker(state={}, action) {
     switch (action.type) {
         case DEVICE_WALL.SET_SELECTED:
-            return {...state, display: action.item};
+            if (!state.display || state.display.id !== action.item.id) {
+                state = {...state, display: action.item};
+            }
+            return state;
 
         case DEVICE_WALL.SET_STATE:
             return {
