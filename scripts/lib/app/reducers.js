@@ -1,9 +1,9 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {DEVICE_WALL, USER} from './action-names';
+import {DEVICE_WALL, USER, UI} from './action-names';
 
-export default combineReducers({devices, presets, deviceWallPicker, user});
+export default combineReducers({devices, presets, deviceWallPicker, ui, user});
 
 function devices(state={}) {
     return state;
@@ -55,6 +55,18 @@ function user(state={}, action) {
                 ...state,
                 presets: removeItem(state.presets || [], action.id)
             };
+    }
+
+    return state;
+}
+
+function ui(state={}, action) {
+    switch (action.type) {
+        case UI.SET_MODE:
+            if (state.mode !== action.mode) {
+                state = {...state, mode: action.mode};
+            }
+            return state;
     }
 
     return state;

@@ -13,9 +13,13 @@ const createStoreWithMiddleware = applyMiddleware(logger)(createStore);
 export const store = createStoreWithMiddleware(reducers, {
     devices: devices.sort(sortByTitle),
     presets: presets.sort(sortByTitle),
+    ui: {
+        mode: 'breakpoints'
+    },
     deviceWallPicker: {
         state: 'initial',
         stateData: {},
+        visible: false,
         display: {
             type: 'preset',
             id: 'apple-phones'

@@ -1,9 +1,12 @@
 'use strict';
 
 import tr from 'tiny-react';
+import {UI} from './lib/app/action-names';
 import DeviceWallPicker from './lib/components/device-wall-picker';
 import {store, subscribe, getStateValue} from './lib/app';
 import fsm from './lib/app/device-wall-fsm';
+
+const EMPTY_OBJECT = {};
 
 const $ = (sel, ctx=document) => ctx.querySelector(sel);
 const mainView = tr.render(DeviceWallPicker, makeProps(store.getState()));
@@ -11,10 +14,21 @@ subscribe(state => mainView.update( makeProps(state) ));
 $('.emmet-re-view__popup-placeholder').appendChild(mainView.target);
 
 function makeProps(state) {
+    var deviceList = getDeviceList(state);
+    var presetList = getPresetList(state);
+    var pickerState = state.deviceWallPicker;
+
+    var selectedDeviceWallItem = EMPTY_OBJECT;
+    if (pickerState.display) {
+        let source = pickerState.display.type === 'device' ? deviceList : presetList;
+        selectedDeviceWallItem = source.reduce((m, item) => item.id === pickerState.id ? item : m, null) || EMPTY_OBJECT;
+    }
+
     return {
-        deviceList: getDeviceList(state),
-        presetList: getPresetList(state),
-        pickerState: state.deviceWallPicker,
+        deviceList,
+        presetList,
+        pickerState,
+        selectedDeviceWallItem,
         addDevice,
         addPreset,
         onDeviceFormSubmit,
