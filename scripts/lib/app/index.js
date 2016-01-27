@@ -1,12 +1,13 @@
 'use strict';
 
+import tr from 'tiny-react';
 import {createStore, applyMiddleware} from 'redux';
 import createLogger from 'redux-logger';
 import reducers from './reducers';
-import * as actions from './action-names';
 import devices from './devices';
 import presets from './presets';
 import deviceWallFsmFactory from './device-wall-fsm';
+import UI from '../components/ui';
 
 const logger = createLogger();
 const createStoreWithMiddleware = applyMiddleware(logger)(createStore);
@@ -72,6 +73,12 @@ export function getStateValue(key='') {
 
 export const deviceWallFSM = deviceWallFsmFactory(dispatch, getStateValue);
 subscribe(() => deviceWallFSM.transition(getStateValue('deviceWallPicker.state')));
+
+export function createUI() {
+    var ui = tr.render(UI, store.getState());
+    subscribe(state => ui.update(state));
+    return ui.target;
+}
 
 /**
  * Returns concatenated list of unique user and default items for given `key`
