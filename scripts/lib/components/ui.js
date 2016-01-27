@@ -7,7 +7,7 @@ import tr from 'tiny-react';
 import DeviceWallControl from './device-wall-control';
 import DeviceWallPopup from './device-wall-picker';
 import ModeToggler from './mode-toggler';
-import {cl} from '../utils';
+import {cl} from './utils';
 
 export default tr.component({
     render(props) {

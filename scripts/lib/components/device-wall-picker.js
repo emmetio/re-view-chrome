@@ -7,7 +7,7 @@ import DeviceList from './device-list';
 import DeviceForm from './device-form';
 import PresetList from './preset-list';
 import PresetForm from './preset-form';
-import {cl} from '../utils';
+import {cl} from './utils';
 import {getItems, deviceWallFSM as fsm} from '../app';
 
 const EMPTY_OBJECT = {};

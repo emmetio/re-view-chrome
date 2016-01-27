@@ -3,7 +3,7 @@
  */
 'use strict';
 import tr from 'tiny-react';
-import {cl} from '../utils';
+import {cl} from './utils';
 import {getStateValue, deviceWallFSM as fsm} from '../app';
 
 const fid = name => `device-form.${name}`;

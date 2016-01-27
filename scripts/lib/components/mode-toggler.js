@@ -4,7 +4,7 @@
 'use strict';
 
 import tr from 'tiny-react';
-import {cl} from '../utils';
+import {cl} from './utils';
 import {dispatch} from '../app';
 import {UI} from '../app/action-names';
 
