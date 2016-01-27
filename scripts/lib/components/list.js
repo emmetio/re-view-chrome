@@ -22,7 +22,7 @@ export default tr.component({
                         className={cl('list-item-input')}
                         value={item.id} checked={item.selected} />
                     <label htmlFor={'fld-' + item.id} className={cl('list-item-label')}>
-                        <span className={cl('list-item-label-inner')}>{item.content}</span>
+                        <span className={cl('list-item-label-inner')}>{item.title}</span>
                         {item.info && <span className={cl('list-item-info')}>{item.info}</span>}
                     </label>
                     {controls || undefined}

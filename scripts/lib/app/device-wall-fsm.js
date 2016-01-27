@@ -9,203 +9,195 @@ import uuid from 'uuid';
 import {dispatch, subscribe, getStateValue} from './';
 import {DEVICE_WALL, USER} from './action-names';
 
-const fsm = new FSM({
-    initial: {
-        // Devices
-        pickDevice,
-        addDevice,
-        editDevice,
-        removeDevice,
+export default function(dispatch, getStateValue) {
+    return new FSM({
+        initial: {
+            // Devices
+            pickDevice,
+            addDevice,
+            editDevice,
+            removeDevice,
 
-        // Presets
-        pickPreset,
-        addPreset,
-        editPreset,
-        removePreset,
-    },
-    editDevice: {
-        addPreset,
-        addDevice: goToInitialState,
-        update: updateCurrentStateData,
-        submit() {
-            // TODO validate device data here?
-            dispatch({
-                type: USER.SAVE_DEVICE,
-                device: getStateValue('deviceWallPicker.stateData')
-            });
-            goToInitialState();
+            // Presets
+            pickPreset,
+            addPreset,
+            editPreset,
+            removePreset,
         },
-        cancel: goToInitialState
-    },
-    editPreset: {
-        addDevice,
-        addPreset: goToInitialState,
+        editDevice: {
+            addPreset,
+            addDevice: goToInitialState,
+            update: updateCurrentStateData,
+            submit() {
+                // TODO validate device data here?
+                dispatch({
+                    type: USER.SAVE_DEVICE,
+                    device: getStateValue('deviceWallPicker.stateData')
+                });
+                goToInitialState();
+            },
+            cancel: goToInitialState
+        },
+        editPreset: {
+            addDevice,
+            addPreset: goToInitialState,
+            pickDevice(id) {
+                var preset = getStateValue('deviceWallPicker.stateData');
+                var devices = preset.devices ? preset.devices.slice(0) : [];
+                var ix = devices.indexOf(id);
+                ix === -1 ? devices.push(id) : devices.splice(ix, 1);
+                this.handle('update', {devices});
+            },
+            update: updateCurrentStateData,
+            submit(preset) {
+                // TODO validate input here?
+                dispatch({
+                    type: USER.SAVE_PRESET,
+                    preset
+                });
+                goToInitialState();
+            },
+            cancel: goToInitialState
+        }
+    }, {
+        reset: goToInitialState,
+
         pickDevice(id) {
-            var preset = getStateValue('deviceWallPicker.stateData');
-            var devices = preset.devices ? preset.devices.slice(0) : [];
-            var ix = devices.indexOf(id);
-            ix === -1 ? devices.push(id) : devices.splice(ix, 1);
-            this.handle('update', {devices});
+            this.handle('pickDevice', id);
         },
-        update: updateCurrentStateData,
-        submit(preset) {
-            // TODO validate input here?
-            dispatch({
-                type: USER.SAVE_PRESET,
-                preset
-            });
-            goToInitialState();
+        addDevice() {
+            this.handle('addDevice');
         },
-        cancel: goToInitialState
+        editDevice(id) {
+            this.handle('editDevice', id);
+        },
+        removeDevice(id) {
+            this.handle('removeDevice', id);
+        },
+        updateDeviceEditData(data) {
+            this.handle('update', data);
+        },
+        submitDeviceEdit(device) {
+            this.handle('submit', device);
+        },
+        cancelDeviceEdit() {
+            this.handle('cancel');
+        },
+
+        pickPreset(id) {
+            this.handle('pickPreset', id);
+        },
+        addPreset() {
+            this.handle('addPreset');
+        },
+        editPreset(id) {
+            this.handle('editPreset', id);
+        },
+        removePreset(id) {
+            this.handle('removePreset', id);
+        },
+        updatePresetEditData(data) {
+            this.handle('update', data);
+        },
+        submitPresetEdit(preset) {
+            this.handle('submit', preset);
+        },
+        cancelPresetEdit() {
+            this.handle('cancel');
+        },
+    });
+
+    function goToInitialState() {
+        dispatch({
+            type: DEVICE_WALL.SET_STATE,
+            state: 'initial'
+        });
     }
-}, {
-    reset: goToInitialState,
 
-    pickDevice(id) {
-        this.handle('pickDevice', id);
-    },
-    addDevice() {
-        this.handle('addDevice');
-    },
-    editDevice(id) {
-        this.handle('editDevice', id);
-    },
-    removeDevice(id) {
-        this.handle('removeDevice', id);
-    },
-    updateDeviceEditData(data) {
-        this.handle('update', data);
-    },
-    submitDeviceEdit(device) {
-        this.handle('submit', device);
-    },
-    cancelDeviceEdit() {
-        this.handle('cancel');
-    },
+    //
+    // Device handlers
+    //
 
-    pickPreset(id) {
-        this.handle('pickPreset', id);
-    },
-    addPreset() {
-        this.handle('addPreset');
-    },
-    editPreset(id) {
-        this.handle('editPreset', id);
-    },
-    removePreset(id) {
-        this.handle('removePreset', id);
-    },
-    updatePresetEditData(data) {
-        this.handle('update', data);
-    },
-    submitPresetEdit(preset) {
-        this.handle('submit', preset);
-    },
-    cancelPresetEdit() {
-        this.handle('cancel');
-    },
-});
+    function pickDevice(id) {
+        dispatch({
+            type: DEVICE_WALL.SET_SELECTED,
+            item: {id, type: 'device'}
+        });
+    }
 
-subscribe(() => fsm.transition(getStateValue('deviceWallPicker.state')));
-
-export default fsm;
-
-function goToInitialState() {
-    dispatch({
-        type: DEVICE_WALL.SET_STATE,
-        state: 'initial'
-    });
-}
-
-//
-// Device handlers
-//
-
-function pickDevice(id) {
-    dispatch({
-        type: DEVICE_WALL.SET_SELECTED,
-        item: {id, type: 'device'}
-    });
-}
-
-function addDevice() {
-    dispatch({
-        type: DEVICE_WALL.SET_STATE,
-        state: 'editDevice',
-        data: {id: uuid.v1()}
-    });
-}
-
- function editDevice(id) {
-    var device = findUserDevice(id);
-    if (device) {
+    function addDevice() {
         dispatch({
             type: DEVICE_WALL.SET_STATE,
             state: 'editDevice',
-            data: device
+            data: {id: uuid.v1()}
         });
     }
-}
 
-function removeDevice(id) {
-    dispatch({
-        type: USER.REMOVE_DEVICE,
-        id
-    });
-}
+     function editDevice(id) {
+        var device = findItem('user.devices', id);
+        if (device) {
+            dispatch({
+                type: DEVICE_WALL.SET_STATE,
+                state: 'editDevice',
+                data: device
+            });
+        }
+    }
 
-//
-// Preset handlers
-//
+    function removeDevice(id) {
+        dispatch({
+            type: USER.REMOVE_DEVICE,
+            id
+        });
+    }
 
-function pickPreset(id) {
-    dispatch({
-        type: DEVICE_WALL.SET_SELECTED,
-        item: {id, type: 'preset'}
-    });
-}
+    //
+    // Preset handlers
+    //
 
-function addPreset() {
-    dispatch({
-        type: DEVICE_WALL.SET_STATE,
-        state: 'editPreset',
-        data: {id: uuid.v1()}
-    });
-}
+    function pickPreset(id) {
+        dispatch({
+            type: DEVICE_WALL.SET_SELECTED,
+            item: {id, type: 'preset'}
+        });
+    }
 
-function editPreset(id) {
-    var preset = findUserPreset(id);
-    if (preset) {
+    function addPreset() {
         dispatch({
             type: DEVICE_WALL.SET_STATE,
             state: 'editPreset',
-            data: preset
+            data: {id: uuid.v1()}
         });
     }
-}
 
-function removePreset(id) {
-    dispatch({
-        type: USER.REMOVE_PRESET,
-        id
-    });
-}
+    function editPreset(id) {
+        var preset = findItem('user.presets', id);
+        if (preset) {
+            dispatch({
+                type: DEVICE_WALL.SET_STATE,
+                state: 'editPreset',
+                data: preset
+            });
+        }
+    }
 
-function updateCurrentStateData(data={}) {
-    var curData = getStateValue('deviceWallPicker.stateData') || {};
-    dispatch({
-        type: DEVICE_WALL.SET_STATE,
-        state: this.current,
-        data: {...curData, ...data}
-    });
-}
+    function removePreset(id) {
+        dispatch({
+            type: USER.REMOVE_PRESET,
+            id
+        });
+    }
 
-function findUserDevice(id) {
-    var items = getStateValue('user.devices') || [];
-    return items.filter(item => item.id === id)[0];
-}
+    function updateCurrentStateData(data={}) {
+        var curData = getStateValue('deviceWallPicker.stateData') || {};
+        dispatch({
+            type: DEVICE_WALL.SET_STATE,
+            state: this.current,
+            data: {...curData, ...data}
+        });
+    }
 
-function findUserPreset(id) {
-    var items = getStateValue('user.presets') || [];
-    return items.filter(item => item.id === id)[0];
+    function findItem(storeKey, itemId) {
+        return (getStateValue(storeKey) || []).filter(item => item.id === itemId)[0];
+    }
 }

@@ -6,6 +6,7 @@ import reducers from './reducers';
 import * as actions from './action-names';
 import devices from './devices';
 import presets from './presets';
+import deviceWallFsmFactory from './device-wall-fsm';
 
 const logger = createLogger();
 const createStoreWithMiddleware = applyMiddleware(logger)(createStore);
@@ -19,7 +20,7 @@ export const store = createStoreWithMiddleware(reducers, {
     deviceWallPicker: {
         state: 'initial',
         stateData: {},
-        visible: false,
+        visible: true,
         display: {
             type: 'preset',
             id: 'apple-phones'
@@ -67,6 +68,31 @@ export function getStateValue(key='') {
     return key.split('.').reduce((state, part) => {
         return state != null ? state[part] : state;
     }, store.getState());
+}
+
+export const deviceWallFSM = deviceWallFsmFactory(dispatch, getStateValue);
+subscribe(() => deviceWallFSM.transition(getStateValue('deviceWallPicker.state')));
+
+/**
+ * Returns concatenated list of unique user and default items for given `key`
+ * in `state` object.
+ * @param  {String} key
+ * @param  {Object} state
+ * @return {Array}
+ */
+export function getItems(key, state=store.getState()) {
+    var lookup = {};
+    var userData = state.user || {};
+    var userItems = (userData[key] || []).map(item => ({
+        ...item,
+        userDefined: true,
+        editable: true
+    }));
+
+    return [].concat(userItems, state[key] || [])
+    // keep unique items only
+    .filter(item => item.id in lookup ? false : lookup[item.id] = true)
+    .sort(sortByTitle);
 }
 
 function sortByTitle(a, b) {

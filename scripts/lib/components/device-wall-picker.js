@@ -8,19 +8,22 @@ import DeviceForm from './device-form';
 import PresetList from './preset-list';
 import PresetForm from './preset-form';
 import {cl} from '../utils';
+import {getItems, deviceWallFSM as fsm} from '../app';
 
 const EMPTY_OBJECT = {};
 
 export default tr.component({
     render(props={}) {
-        var state = props.pickerState;
+        var state = props.deviceWallPicker;
         var stateName = state.state;
         var deviceEditMode = stateName === 'editDevice';
         var presetEditMode = stateName === 'editPreset';
         var deviceData = EMPTY_OBJECT, presetData = EMPTY_OBJECT;
+        var deviceList = getDeviceList(props);
+        var presetList = getPresetList(props);
 
         if (presetEditMode) {
-            let lookup = itemsLookup(props.deviceList.items);
+            let lookup = itemsLookup(deviceList.items);
             presetData = {
                 ...state.stateData,
                 devices: (state.stateData.devices || []).map(id => lookup[id])
@@ -31,22 +34,78 @@ export default tr.component({
 
         return <div className={cl('popup', 'devices')}>
             <section className={cl('section')}>
-                <h2 className={cl('section-title')}>Devices <i className={cl('icon-add', deviceEditMode && 'icon-add_active')} onclick={props.addDevice}></i></h2>
+                <h2 className={cl('section-title')}>Devices <i className={cl('icon-add', deviceEditMode && 'icon-add_active')}  onclick={addDevice}></i></h2>
                 <div className={cl('section-content')}>
-                    <DeviceList {...props.deviceList} hidden={deviceEditMode} />
-                    <DeviceForm {...deviceData} visible={deviceEditMode} onsubmit={props.onDeviceFormSubmit} onreset={props.onDeviceFormReset} oninput={props.onDeviceFormInput} />
+                    <DeviceList {...deviceList} hidden={deviceEditMode} />
+                    <DeviceForm {...deviceData} visible={deviceEditMode} />
                 </div>
             </section>
             <section className={cl('section')}>
-                <h2 className={cl('section-title')}>Presets <i className={cl('icon-add', presetEditMode && 'icon-add_active')} onclick={props.addPreset}></i></h2>
+                <h2 className={cl('section-title')}>Presets <i className={cl('icon-add', presetEditMode && 'icon-add_active')} onclick={addPreset}></i></h2>
                 <div className={cl('section-content')}>
-                    <PresetList {...props.presetList} hidden={presetEditMode} />
-                    <PresetForm {...presetData} visible={presetEditMode} onsubmit={props.onPresetFormSubmit} onreset={props.onPresetFormReset} oninput={props.onPresetFormInput} />
+                    <PresetList {...presetList} hidden={presetEditMode} />
+                    <PresetForm {...presetData} visible={presetEditMode} />
                 </div>
             </section>
         </div>
     }
 });
+
+function addDevice() {
+    fsm.addDevice();
+}
+
+function addPreset() {
+    fsm.addPreset();
+}
+
+/**
+ * Returns props for DeviceList component.
+ * @param  {Object} state
+ * @return {Object}
+ */
+function getDeviceList(state) {
+    var fsmData = state.deviceWallPicker || {};
+    var mode = 'pick-one';
+    var items = getItems('devices', state).map(item => ({
+        ...item,
+        info: `${item.width}×${item.height}`
+    }));
+
+    var selected;
+    if (fsmData.state === 'editPreset') {
+        mode = 'pick-many';
+        selected = fsmData.stateData && fsmData.stateData.devices;
+    } else {
+        selected = fsmData.display && fsmData.display.type === 'device' && fsmData.display.id;
+    }
+
+    return {
+        mode,
+        items: markSelected(items, selected)
+    };
+}
+
+/**
+ * Returns props for PresetList component
+ * @param {Object} state
+ */
+function getPresetList(state) {
+    var fsmData = state.deviceWallPicker || {};
+    var selected = fsmData.display && fsmData.display.type === 'preset' && fsmData.display.id;
+    return {
+        items: markSelected(getItems('presets', state), selected)
+    };
+}
+
+function markSelected(items, selected) {
+    if (!selected) {
+        return items;
+    }
+
+    selected = Array.isArray(selected) ? selected : [selected];
+    return items.map(item => (selected.indexOf(item.id) === -1 ? item : {...item, selected: true}));
+}
 
 function itemsLookup(items) {
     return (items || []).reduce((lookup, item) => {

@@ -27,6 +27,13 @@ function deviceWallPicker(state={}, action) {
                 state: action.state,
                 stateData: action.data
             };
+
+        case DEVICE_WALL.TOGGLE_VISIBILITY:
+            let data = state.stateData || {};
+            return {
+                ...state,
+                stateData: {...data, visible: !data.visible}
+            };
     }
 
     return state;
@@ -63,7 +70,7 @@ function user(state={}, action) {
 function ui(state={}, action) {
     switch (action.type) {
         case UI.SET_MODE:
-            if (state.mode !== action.mode) {
+            if (action.mode && action.mode !== state.mode) {
                 state = {...state, mode: action.mode};
             }
             return state;

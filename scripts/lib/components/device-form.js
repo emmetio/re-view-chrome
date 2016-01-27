@@ -4,6 +4,7 @@
 'use strict';
 import tr from 'tiny-react';
 import {cl} from '../utils';
+import {getStateValue, deviceWallFSM as fsm} from '../app';
 
 const fid = name => `device-form.${name}`;
 
@@ -11,7 +12,7 @@ export default tr.component({
     render(props) {
         props = props || {};
         return <form action="" className={cl('form', props.visible && 'form_visible')}
-            onsubmit={props.onsubmit} onreset={props.onreset}  oninput={props.oninput}>
+            onsubmit={onSubmit} onreset={onReset} oninput={onInput}>
             <input type="hidden" name="id" value={props.id} />
             <div className={cl('form-row')}>
                 <label htmlFor={fid('title')} className={cl('form-label')}>Device name</label>
@@ -38,3 +39,18 @@ export default tr.component({
         </form>
     }
 });
+
+function onSubmit(evt) {
+    evt.preventDefault();
+    fsm.submitDeviceEdit(getStateValue('deviceWallPicker.stateData'));
+}
+
+function onReset(evt) {
+    evt.preventDefault();
+    fsm.cancelDeviceEdit();
+}
+
+function onInput(evt) {
+    var elem = evt.target;
+    fsm.updateDeviceEditData({[elem.name]: elem.value});
+}

@@ -3,7 +3,7 @@
 export const DEVICE_WALL = {
     SET_SELECTED: 'Set selected Device Wall item',
     SET_STATE: 'Set Device Wall picker internal state data',
-    SET_VISIBILITY: 'Set Device Wall picker popup visibility state'
+    TOGGLE_VISIBILITY: 'Toggle Device Wall picker popup visibility state'
 };
 
 export const USER = {

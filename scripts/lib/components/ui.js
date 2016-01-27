@@ -15,9 +15,9 @@ export default tr.component({
             <h1 className={cl('logo')}>Re:view <span className={cl('logo-version')}>2</span></h1>
 
             <div className={cl('header-content')}>
-                <ModeToggler {...props} />
+                <ModeToggler mode={props.ui.mode} />
                 <DeviceWallControl {...props} />
-                {props.pickerState.visible && <DeviceWallPopup {...props} />}
+                <DeviceWallPopup {...props} />
             </div>
 
             <div className={cl('header-icons')}>
