@@ -1,0 +1,25 @@
+{
+	"name": "Emmet Re:view",
+	"description": "Easy test your responsive design in multiple viewports",
+	"short_name": "Re:view",
+	"version": "2.0.0",
+	"permissions": [
+		"activeTab",
+		"storage",
+		"webRequest",
+		"webRequestBlocking",
+		"http://*/*",
+		"https://*/*"
+	],
+	"background": {
+		"scripts": ["scripts/background.js"]
+	},
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*", "file:///*"],
+		"js": ["scripts/content-script.js"],
+		"run_at": "document_start",
+		"all_frames": true
+    }],
+	"web_accessible_resources": ["proxy"],
+	"manifest_version": 2
+}
