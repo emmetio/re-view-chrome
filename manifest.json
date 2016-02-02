@@ -1,6 +1,6 @@
 {
 	"name": "Emmet Re:view",
-	"description": "Easy test your responsive design in multiple viewports",
+	"description": "Fast and easy way to test your responsive design in multiple viewports",
 	"short_name": "Re:view",
 	"version": "2.0.0",
 	"permissions": [
@@ -20,6 +20,13 @@
 		"run_at": "document_start",
 		"all_frames": true
     }],
+	"browser_action": {
+		"default_title": "Emmet Re:View",
+		"default_icon": {
+			"19": "icons/19x19.png",
+			"38": "icons/38x38.png"
+		}
+	},
 	"web_accessible_resources": ["proxy"],
 	"manifest_version": 2
 }

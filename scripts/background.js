@@ -1,7 +1,23 @@
 'use strict';
 
 const userAgentOverride = {};
+const activeSessions = []
 const cacheTTL = 60 * 60 * 1000;
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+    if (activeSessions.indexOf(tab.id) !== -1) {
+        chrome.tabs.sendMessage(tab.id, 'destroy-re:view');
+        removeSession(tab.id)
+    } else {
+        console.log('create re:view session');
+        activeSessions.push(tab.id);
+        chrome.tabs.insertCSS(tab.id, {file: 'style/main.css'});
+        chrome.tabs.executeScript(tab.id, {file: 'scripts/re-view.js'});
+    }
+});
+
+chrome.tabs.onRemoved.addListener(removeSession);
+chrome.tabs.onUpdated.addListener(removeSession);
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
     // initial proxy request: get user agent from params of given request url
@@ -62,4 +78,11 @@ function cleanUp() {
         }
     });
     setTimeout(cleanUp, cacheTTL);
+}
+
+function removeSession(tabId) {
+    var ix = activeSessions.indexOf(tabId);
+    if (ix !== -1) {
+        activeSessions.splice(ix, 1);
+    }
 }
