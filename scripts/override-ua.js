@@ -1,11 +1,17 @@
 'use strict';
-if (window.frameElement) {
-    var src = window.frameElement.src;
-    var params = parseQuery(src) || {};
-    if (params.userAgent) {
-        var script = document.createElement('script');
-        script.text = `navigator.__defineGetter__('userAgent', function() {return "${params.userAgent.replace(/"/g, '\\"')}";});`;
-        document.documentElement.appendChild(script);
+try {
+    overrideUA();
+} catch(e) {}
+
+function overrideUA() {
+    if (window.frameElement) {
+        var src = window.frameElement.src;
+        var params = parseQuery(src) || {};
+        if (params.userAgent) {
+            var script = document.createElement('script');
+            script.text = `navigator.__defineGetter__('userAgent', function() {return "${params.userAgent.replace(/"/g, '\\"')}";});`;
+            document.documentElement.appendChild(script);
+        }
     }
 }
 

@@ -19,6 +19,10 @@ const saveDataToStorage = throttle(state => {
             options: state.options,
             user: state.user
         }
+    }, () => {
+        if (chrome.runtime.lastError) {
+            console.error('Unable to save Re:view state', chrome.runtime.lastError);
+        }
     });
 }, 5000);
 
@@ -77,6 +81,7 @@ function startApp() {
                     rw.destroy();
                     unsubscribeSave();
                     rw = unsubscribeSave = null;
+                    location.reload();
                 }
             });
         });
