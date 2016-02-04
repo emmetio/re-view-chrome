@@ -73,6 +73,7 @@ function startApp() {
 
             initialState.pageUrl = location.href;
 
+            resetPage();
             var rw = reView(document.body, {initialState, urlForView});
             var unsubscribeSave = subscribe(saveDataToStorage);
 
@@ -94,4 +95,21 @@ function urlForView(url, type, spec) {
     }
 
     return url;
+}
+
+/**
+ * Hides all contents on current page to free some resources for Re:view
+ */
+function resetPage() {
+    var elem = document.body.firstChild;
+    while (elem) {
+        if (elem.nodeType === 1) {
+            elem.style.display = 'none';
+        }
+        elem = elem.nextElementSibling;
+    }
+
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        document.styleSheets[i].disabled = true;
+    }
 }
