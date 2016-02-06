@@ -52,6 +52,7 @@ gulp.task('assets', () => {
 gulp.task('watch', ['build'], () => {
     gulp.watch('./node_modules/livestyle-re-view/style/**/*.scss', ['style']);
     gulp.watch('./scripts/**/*.js', ['script']);
+    gulp.watch('./manifest.json', ['assets']);
 });
 
 gulp.task('build', ['style', 'script', 'assets']);

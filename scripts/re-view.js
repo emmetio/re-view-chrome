@@ -51,6 +51,7 @@ function startApp() {
                 return;
             }
 
+            var scrollWidth = measureScrollWidth();
             var initialState = data[storageKey];
             if (!initialState) {
                 // no initial data, show help popup
@@ -74,7 +75,7 @@ function startApp() {
             initialState.pageUrl = location.href;
 
             resetPage();
-            var rw = reView(document.body, {initialState, urlForView});
+            var rw = reView(document.body, {initialState, urlForView, scrollWidth});
             var unsubscribeSave = subscribe(saveDataToStorage);
 
             chrome.runtime.onMessage.addListener(message => {
@@ -112,4 +113,18 @@ function resetPage() {
     for (var i = 0; i < document.styleSheets.length; i++) {
         document.styleSheets[i].disabled = true;
     }
+}
+
+function measureScrollWidth() {
+    var outer = document.createElement('div');
+    var inner = document.createElement('div');
+
+    outer.style.cssText = 'position:absolute;top:0;left:0;width:100px;height:100px;overflow:auto;padding:0;margin:0;display:block;z-index:200';
+    inner.style.cssText = 'height:200px;display:block;padding:0;margin:0;';
+    outer.appendChild(inner);
+    document.body.appendChild(outer);
+    var scrollerWidth = Math.max(0, 100 - inner.offsetWidth);
+    document.body.removeChild(outer);
+
+	return scrollerWidth;
 }

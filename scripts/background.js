@@ -4,15 +4,20 @@ const userAgentOverride = {};
 const activeSessions = []
 const cacheTTL = 60 * 60 * 1000;
 
+const defaultIcon = 'icons/browser-action.png';
+const activeIcon = 'icons/browser-action-active.png';
+
 chrome.browserAction.onClicked.addListener(function(tab) {
     if (activeSessions.indexOf(tab.id) !== -1) {
         chrome.tabs.sendMessage(tab.id, 'destroy-re:view');
-        removeSession(tab.id)
+        removeSession(tab.id);
+        updateIcon(tab.id, defaultIcon);
     } else {
         console.log('create re:view session');
         activeSessions.push(tab.id);
         chrome.tabs.insertCSS(tab.id, {file: 'style/main.css'});
         chrome.tabs.executeScript(tab.id, {file: 'scripts/re-view.js'});
+        updateIcon(tab.id, activeIcon);
     }
 });
 
@@ -85,4 +90,8 @@ function removeSession(tabId) {
     if (ix !== -1) {
         activeSessions.splice(ix, 1);
     }
+}
+
+function updateIcon(tabId, path) {
+    chrome.browserAction.setIcon({path, tabId});
 }

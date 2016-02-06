@@ -23,10 +23,10 @@
 	"browser_action": {
 		"default_title": "Emmet Re:View",
 		"default_icon": {
-			"19": "icons/19x19.png",
-			"38": "icons/38x38.png"
+			"38": "icons/browser-action.png"
 		}
 	},
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google.com https://*.carbonads.com; object-src 'self'",
 	"web_accessible_resources": ["proxy"],
 	"manifest_version": 2
 }
