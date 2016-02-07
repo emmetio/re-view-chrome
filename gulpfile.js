@@ -7,18 +7,21 @@ const sass = require('gulp-sass');
 const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
+const cssnano = require('gulp-cssnano');
+const zip = require('gulp-zip');
 const js = require('./gulp-tasks/js-bundle');
 const notify = require('./gulp-tasks/notify');
 const pkg = require('./package.json');
 
 const isWatching = ~process.argv.indexOf('watch');
-const production = ~process.argv.indexOf('--production');
+const production = ~process.argv.indexOf('--production') || process.env.NODE_ENV === 'production';
 const src = (pattern, options) => gulp.src(pattern, Object.assign({base: './'}, options || {}));
 const dest = (pattern) => gulp.dest(pattern || './out');
 
 gulp.task('style', () => {
     return gulp.src('./node_modules/livestyle-re-view/style/*.scss')
     .pipe(sass()).on('error', notify('SCSS Error'))
+    .pipe(production ? cssnano() : pass())
     .pipe(gulp.dest('./out/style'));
 });
 
@@ -47,6 +50,12 @@ gulp.task('assets', () => {
         next(null, file);
     }))
     .pipe(dest());
+});
+
+gulp.task('pack', ['build'], function() {
+	return gulp.src(['**', '!*.{zip,map}'], {cwd: './out'})
+	.pipe(zip('re-view.zip'))
+	.pipe(dest());
 });
 
 gulp.task('watch', ['build'], () => {
