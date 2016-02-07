@@ -1,20 +1,19 @@
 'use strict';
 
 const userAgentOverride = {};
-const activeSessions = []
+const activeSessions = {};
 const cacheTTL = 60 * 60 * 1000;
 
 const defaultIcon = 'icons/browser-action.png';
 const activeIcon = 'icons/browser-action-active.png';
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-    if (activeSessions.indexOf(tab.id) !== -1) {
+    if (hasActiveSession(tab.id)) {
         chrome.tabs.sendMessage(tab.id, 'destroy-re:view');
         removeSession(tab.id);
         updateIcon(tab.id, defaultIcon);
     } else {
-        console.log('create re:view session');
-        activeSessions.push(tab.id);
+        createSession(tab.id, tab.url);
         chrome.tabs.insertCSS(tab.id, {file: 'style/main.css'});
         chrome.tabs.executeScript(tab.id, {file: 'scripts/re-view.js'});
         updateIcon(tab.id, activeIcon);
@@ -53,7 +52,7 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
     types: ['sub_frame']
 }, ['blocking']);
 
-
+// override user-agent for internal request
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     var override = userAgentOverride[details.frameId];
     if (override) {
@@ -73,6 +72,17 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     urls: ['<all_urls>']
 }, ['blocking', 'requestHeaders']);
 
+// remove x-frame-options header for Re:view iframes
+chrome.webRequest.onHeadersReceived.addListener(details => {
+    if (hasActiveSession(details.tabId) && details.frameId) {
+        let responseHeaders = details.responseHeaders.filter(h => h.name.toLowerCase() !== 'x-frame-options');
+        return {responseHeaders};
+    }
+}, {
+    urls: ['<all_urls>'],
+    types: ['sub_frame']
+}, ['blocking', 'responseHeaders']);
+
 cleanUp();
 
 function cleanUp() {
@@ -85,11 +95,16 @@ function cleanUp() {
     setTimeout(cleanUp, cacheTTL);
 }
 
+function hasActiveSession(tabId) {
+    return tabId in activeSessions;
+}
+
+function createSession(tabId, url) {
+    activeSessions[tabId] = url;
+}
+
 function removeSession(tabId) {
-    var ix = activeSessions.indexOf(tabId);
-    if (ix !== -1) {
-        activeSessions.splice(ix, 1);
-    }
+    delete activeSessions[tabId];
 }
 
 function updateIcon(tabId, path) {

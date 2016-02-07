@@ -43,9 +43,7 @@ function startApp() {
 
     findBreakpoints(document)
     .then(breakpoints => {
-        console.log('got breakpoints', breakpoints);
         storage.get(storageKey, data => {
-            console.log('loaded data', data);
             if (destroyed) {
                 // Re:view was destroyed right before data was loaded
                 return;
