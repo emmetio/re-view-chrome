@@ -17,7 +17,7 @@
 		"128": "icons/128.png"
 	},
 	"background": {
-		"scripts": ["scripts/background.js"]
+		"page": "background.html"
 	},
 	"content_scripts": [{
 		"matches": ["http://*/*", "https://*/*", "file:///*"],
@@ -31,7 +31,7 @@
 			"38": "icons/browser-action.png"
 		}
 	},
-	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google.com https://*.carbonads.com; object-src 'self'",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google-analytics.com https://*.carbonads.com; object-src 'self'",
 	"web_accessible_resources": ["proxy"],
 	"manifest_version": 2
 }

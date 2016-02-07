@@ -1,5 +1,5 @@
 'use strict';
-import {default as reView, subscribe, findBreakpoints, UI, APP} from 'livestyle-re-view';
+import {default as reView, subscribe, findBreakpoints, getStateValue, UI, APP} from 'livestyle-re-view';
 import {throttle} from './lib/utils';
 
 const storage = chrome.storage.sync;
@@ -73,14 +73,18 @@ function startApp() {
             initialState.pageUrl = location.href;
 
             resetPage();
+            var subscriptions = [
+                subscribe(mode => trackEvent('Mode', mode), state => getStateValue('ui.mode', state)),
+                subscribe(wall => trackEvent('Wall display', wall), state => getStateValue('deviceWallPicker.display.type', state))
+            ];
             var rw = reView(document.body, {initialState, urlForView, scrollWidth});
-            var unsubscribeSave = subscribe(saveDataToStorage);
+            subscriptions.push(subscribe(saveDataToStorage));
 
             chrome.runtime.onMessage.addListener(message => {
                 if (message === destroyMesageName && rw) {
                     rw.destroy();
-                    unsubscribeSave();
-                    rw = unsubscribeSave = null;
+                    subscriptions.forEach(fn => fn());
+                    rw = subscriptions = null;
                     location.reload();
                 }
             });
@@ -126,3 +130,10 @@ function measureScrollWidth() {
 
 	return scrollerWidth;
 }
+
+function trackEvent(category, action, label) {
+    chrome.runtime.sendMessage({
+        action: 'track-event',
+        data: {category, action, label}
+    });
+};

@@ -7,6 +7,10 @@ const cacheTTL = 60 * 60 * 1000;
 const defaultIcon = 'icons/browser-action.png';
 const activeIcon = 'icons/browser-action-active.png';
 
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-4523560-10', 'auto');
+ga('set', 'checkProtocolTask', null);
+
 chrome.browserAction.onClicked.addListener(function(tab) {
     if (hasActiveSession(tab.id)) {
         chrome.tabs.sendMessage(tab.id, 'destroy-re:view');
@@ -14,6 +18,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         updateIcon(tab.id, defaultIcon);
     } else {
         createSession(tab.id, tab.url);
+        ga('send', 'pageview', '/chrome-extension');
         chrome.tabs.insertCSS(tab.id, {file: 'style/main.css'});
         chrome.tabs.executeScript(tab.id, {file: 'scripts/re-view.js'});
         updateIcon(tab.id, activeIcon);
@@ -82,6 +87,13 @@ chrome.webRequest.onHeadersReceived.addListener(details => {
     urls: ['<all_urls>'],
     types: ['sub_frame']
 }, ['blocking', 'responseHeaders']);
+
+chrome.runtime.onMessage.addListener(message => {
+    if (message && message.action === 'track-event') {
+        let data = message.data;
+        ga('send', 'event', data.category, data.action, data.label);
+    }
+});
 
 cleanUp();
 
