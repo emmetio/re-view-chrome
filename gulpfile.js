@@ -42,7 +42,7 @@ gulp.task('script', () => {
 gulp.task('assets', () => {
     return src(['./manifest.json', './background.html', './icons/**'])
     .pipe(through(function(file, enc, next) {
-        if (path.basename(file) === 'manifest.json') {
+        if (path.basename(file.path) === 'manifest.json') {
             var data = JSON.parse(file.contents.toString());
             data.version = pkg.version;
             file.contents = new Buffer(JSON.stringify(data));
