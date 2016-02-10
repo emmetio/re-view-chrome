@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/emmetio/re-view-chrome",
   "dependencies": {
-    "livestyle-re-view": "livestyle/re-view"
+    "livestyle-re-view": "livestyle/re-view#v2.1.0",
+    "page-sync": "livestyle/page-sync#v1.1.0"
   },
   "devDependencies": {
     "babel-plugin-transform-node-env-inline": "^6.3.13",

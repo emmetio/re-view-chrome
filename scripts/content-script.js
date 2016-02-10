@@ -1,7 +1,17 @@
 'use strict';
+
+import pageSync from 'page-sync';
+
 try {
     overrideUA();
 } catch(e) {}
+
+// check if we should enable PageSync for current window
+if (window !== window.top && window.parent === window.top) {
+    chrome.runtime.sendMessage({action: 'is-review-frame'}, val => {
+        val && pageSync();
+    });
+}
 
 function overrideUA() {
     if (window.frameElement) {

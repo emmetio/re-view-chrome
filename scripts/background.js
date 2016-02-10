@@ -88,10 +88,12 @@ chrome.webRequest.onHeadersReceived.addListener(details => {
     types: ['sub_frame']
 }, ['blocking', 'responseHeaders']);
 
-chrome.runtime.onMessage.addListener(message => {
-    if (message && message.action === 'track-event') {
+chrome.runtime.onMessage.addListener((message, sender, response) => {
+    if (message.action === 'track-event') {
         let data = message.data;
         ga('send', 'event', data.category, data.action, data.label);
+    } else if (message.action === 'is-review-frame') {
+        response(hasActiveSession(sender.tab.id) && sender.frameId);
     }
 });
 
