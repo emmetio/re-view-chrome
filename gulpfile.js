@@ -53,7 +53,7 @@ gulp.task('assets', () => {
 });
 
 gulp.task('pack', ['build'], function() {
-	return gulp.src(['**', '!*.{zip,map}'], {cwd: './out'})
+	return gulp.src(['**', '!**/*.{zip,map}'], {cwd: './out'})
 	.pipe(zip('re-view.zip'))
 	.pipe(dest());
 });
