@@ -4,8 +4,12 @@ const userAgentOverride = {};
 const activeSessions = {};
 const cacheTTL = 60 * 60 * 1000;
 
+const donationItemSKU = 're_view';
+const inAppParams = {env: 'prod'};
 const defaultIcon = 'icons/browser-action.png';
 const activeIcon = 'icons/browser-action-active.png';
+
+var didDonated = false;
 
 window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 ga('create', 'UA-4523560-10', 'auto');
@@ -89,15 +93,19 @@ chrome.webRequest.onHeadersReceived.addListener(details => {
 }, ['blocking', 'responseHeaders']);
 
 chrome.runtime.onMessage.addListener((message, sender, response) => {
-    if (message.action === 'track-event') {
-        let data = message.data;
-        ga('send', 'event', data.category, data.action, data.label);
-    } else if (message.action === 'is-review-frame') {
-        response(hasActiveSession(sender.tab.id) && sender.frameId);
+    switch (message.action) {
+        case 'track-event':
+            let data = message.data;
+            ga('send', 'event', data.category, data.action, data.label);
+            break;
+        case 'is-review-frame':
+            response(hasActiveSession(sender.tab.id) && sender.frameId);
+            break;
     }
 });
 
 cleanUp();
+checkIfUserDonated().then(donated => console.log('did user donated?', donated));
 
 function cleanUp() {
     var now = Date.now();
@@ -123,4 +131,65 @@ function removeSession(tabId) {
 
 function updateIcon(tabId, path) {
     chrome.browserAction.setIcon({path, tabId});
+}
+
+function getProducts() {
+    return new Promise((resolve, reject) => {
+        google.payments.inapp.getSkuDetails({
+            parameters: inAppParams,
+            success: data => {
+                let products = data.response.details.inAppProducts || [];
+                let product = products.filter(prod => prod.sku === donationItemSKU && prod.state === 'ACTIVE')[0];
+                product ? resolve(product) : reject(new Error('No donation product'));
+            },
+            failure: data => reject(data.response)
+        });
+    });
+}
+
+function getPurchases() {
+    return new Promise((resolve, reject) => {
+        google.payments.inapp.getPurchases({
+            parameters: inAppParams,
+            success: data => resolve(data.response.details || []),
+            failure: data => reject(data.response)
+        });
+    });
+}
+
+function checkIfUserDonated() {
+    if (didDonated) {
+        return Promise.resolve(didDonated);
+    }
+
+    return getPurchases()
+    .then(licenses => didDonated = licenses.some(l => l.sku === donationItemSKU))
+    .catch(err => didDonated = false);
+}
+
+function donate() {
+    return new Promise((resolve, reject) => {
+        google.payments.inapp.buy({
+            parameters: inAppParams,
+            sku: donationItemSKU,
+            success: data => {
+                broadcast('donate-success');
+                resolve(data.response);
+            },
+            failure: data => {
+                broadcast({action: 'donate-failed', data: data.response});
+                reject(data.response);
+            }
+        });
+    });
+}
+
+function broadcast(message) {
+    if (typeof message === 'string') {
+        message = {action: message};
+    }
+
+    var opt = {frameId: 0};
+    Object.keys(activeSessions)
+    .forEach(tabId => chrome.tabs.sendMessage(tabId, message, opt));
 }
