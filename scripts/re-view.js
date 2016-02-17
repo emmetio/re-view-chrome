@@ -1,10 +1,11 @@
 'use strict';
-import {default as reView, subscribe, findBreakpoints, getStateValue, UI, APP} from 'livestyle-re-view';
+import {default as reView, dispatch, subscribe, findBreakpoints, getStateValue, UI, APP, DONATION} from 'livestyle-re-view';
 import {throttle} from './lib/utils';
+import * as donation from './lib/donation';
 
 const storage = chrome.storage.sync;
 const storageKey = 're-view2';
-const destroyMesageName = 'destroy-re:view';
+const donatedKey = 'donated';
 const proxyUrl = chrome.runtime.getURL('proxy');
 const featureAliases = {
     minWidth: 'min',
@@ -28,8 +29,11 @@ const saveDataToStorage = throttle(state => {
     // force selected breakpoints list to be stored in local storage
     var origin = window.location.origin;
     var selectedBP = getStateValue('breakpoints.selected', state) || [];
-    chrome.storage.local.set({[origin]: {selectedBP}});
-}, 5000);
+    chrome.storage.local.set({
+        [origin]: {selectedBP},
+        [donatedKey]: !!getStateValue('donation.made', state)
+    });
+}, 3000);
 
 
 startApp();
@@ -41,12 +45,17 @@ function startApp() {
     // if `destroy` message was sent before Re:view was generated, mark current
     // state as destroyed
     chrome.runtime.onMessage.addListener(message => {
-        if (message === destroyMesageName) {
+        if (message.action === 'destroy-re:view') {
             destroyed = true;
         }
     });
 
-    Promise.all([findBreakpoints(document), getGlobalState(), getLocalState()])
+    Promise.all([
+        findBreakpoints(document),
+        getGlobalState(),
+        getLocalState(),
+        donation.checkDonated()
+    ])
     .then(values => {
         if (destroyed) {
             // Re:view was destroyed right before data was loaded
@@ -54,7 +63,7 @@ function startApp() {
         }
 
         var scrollWidth = measureScrollWidth();
-        var [breakpoints, initialState, localData] = values;
+        var [breakpoints, initialState, localData, donated] = values;
         if (!initialState) {
             // no initial data, show help popup
             initialState = {
@@ -62,8 +71,15 @@ function startApp() {
             };
         }
 
-        initialState.breakpoints = breakpointsPayload(breakpoints, localData.selectedBP);
+        console.log('got local data', localData);
+        console.log('donation state', donated);
+
+        initialState.breakpoints = breakpointsPayload(breakpoints, localData.page.selectedBP);
         initialState.pageUrl = location.href;
+        initialState.donation = {
+            handler: donation.handler,
+            made: donated || localData[donatedKey]
+        },
 
         resetPage();
         var subscriptions = [
@@ -72,13 +88,26 @@ function startApp() {
         ];
         var rw = reView(document.body, {initialState, urlForView, scrollWidth});
         subscriptions.push(subscribe(saveDataToStorage));
+        if (donated === null) {
+            setDonationMade();
+        }
+
+        if (!donated) {
+            setDonationProduct();
+        }
 
         chrome.runtime.onMessage.addListener(message => {
-            if (message === destroyMesageName && rw) {
-                rw.destroy();
-                subscriptions.forEach(fn => fn());
-                rw = subscriptions = null;
-                location.reload();
+            switch (message.action) {
+                case 'destroy-re:view':
+                    if (rw) {
+                        rw.destroy();
+                        subscriptions.forEach(fn => fn());
+                        rw = subscriptions = null;
+                        location.reload();
+                    }
+                    break;
+                case 'donate-success':
+                    return dispatch({type: DONATION.MADE});
             }
         });
     });
@@ -178,7 +207,10 @@ function getGlobalState() {
 function getLocalState() {
     return new Promise(resolve => {
         var origin = window.location.origin;
-        chrome.storage.local.get(origin, data => resolve(data[origin] || {}));
+        chrome.storage.local.get([origin, donatedKey], data => resolve({
+            page: data[origin] || {},
+            [donatedKey]: !!data.donated
+        }));
     })
     .catch(err => ({}));
 }
@@ -222,4 +254,20 @@ function optimalBreakpointsList(breakpoints) {
     }
 
     return optimized.length !== breakpoints.length ? optimized : [];
+}
+
+function setDonationProduct() {
+    donation.getProduct().then(product => {
+        console.log('set product', product);
+        dispatch({type: DONATION.SET_PRODUCT, product});
+    });
+}
+
+function setDonationMade() {
+    donation.isDonated().then(made => {
+        console.log('set donation made', made);
+        if (made) {
+            dispatch({type: DONATION.MADE});
+        }
+    });
 }

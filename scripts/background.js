@@ -17,7 +17,7 @@ ga('set', 'checkProtocolTask', null);
 
 chrome.browserAction.onClicked.addListener(function(tab) {
     if (hasActiveSession(tab.id)) {
-        chrome.tabs.sendMessage(tab.id, 'destroy-re:view');
+        chrome.tabs.sendMessage(tab.id, {action: 'destroy-re:view'});
         removeSession(tab.id);
         updateIcon(tab.id, defaultIcon);
     } else {
@@ -101,6 +101,16 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
         case 'is-review-frame':
             response(hasActiveSession(sender.tab.id) && sender.frameId);
             break;
+
+        case 'is-donated':
+            checkIfUserDonated().then(data => response({data}));
+            return true;
+        case 'get-donation-data':
+            getProducts().then(data => response({data}), error => response({error}));
+            return true;
+        case 'donate':
+            donate().then(data => response({data}), error => response({error}));
+            return true;
     }
 });
 
@@ -191,5 +201,5 @@ function broadcast(message) {
 
     var opt = {frameId: 0};
     Object.keys(activeSessions)
-    .forEach(tabId => chrome.tabs.sendMessage(tabId, message, opt));
+    .forEach(tabId => chrome.tabs.sendMessage(+tabId, message, opt));
 }
