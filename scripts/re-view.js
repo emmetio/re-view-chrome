@@ -54,7 +54,7 @@ function startApp() {
         findBreakpoints(document),
         getGlobalState(),
         getLocalState(),
-        donation.checkDonated()
+        checkDonated()
     ])
     .then(values => {
         if (destroyed) {
@@ -71,14 +71,11 @@ function startApp() {
             };
         }
 
-        console.log('got local data', localData);
-        console.log('donation state', donated);
-
         initialState.breakpoints = breakpointsPayload(breakpoints, localData.page.selectedBP);
         initialState.pageUrl = location.href;
         initialState.donation = {
             handler: donation.handler,
-            made: donated || localData[donatedKey]
+            made: donated || localData[donatedKey] || false
         },
 
         resetPage();
@@ -88,9 +85,6 @@ function startApp() {
         ];
         var rw = reView(document.body, {initialState, urlForView, scrollWidth});
         subscriptions.push(subscribe(saveDataToStorage));
-        if (donated === null) {
-            setDonationMade();
-        }
 
         if (!donated) {
             setDonationProduct();
@@ -107,7 +101,7 @@ function startApp() {
                     }
                     break;
                 case 'donate-success':
-                    return dispatch({type: DONATION.MADE});
+                    return setDonationMade(true);
             }
         });
     });
@@ -258,16 +252,24 @@ function optimalBreakpointsList(breakpoints) {
 
 function setDonationProduct() {
     donation.getProduct().then(product => {
-        console.log('set product', product);
         dispatch({type: DONATION.SET_PRODUCT, product});
     });
 }
 
-function setDonationMade() {
-    donation.isDonated().then(made => {
-        console.log('set donation made', made);
-        if (made) {
-            dispatch({type: DONATION.MADE});
-        }
-    });
+/**
+ * Check if user donated. Since this request is made before displaying UI,
+ * we chould not block user for too long (in case if request takes too much time)
+ */
+export function checkDonated() {
+    return Promise.race([
+        donation.isDonated().then(setDonationMade),
+        new Promise(resolve => setTimeout(() => resolve(null), 1000))
+    ]);
+}
+
+function setDonationMade(made) {
+    if (made) {
+        dispatch({type: DONATION.MADE});
+    }
+    return !!made;
 }

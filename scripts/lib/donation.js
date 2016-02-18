@@ -28,17 +28,6 @@ export function isDonated() {
     });
 }
 
-/**
- * Check if user donated. Since this request is made before displaying UI,
- * we chould not block user for too long (in case if request takes too much time)
- */
-export function checkDonated() {
-    return Promise.race([
-        isDonated(),
-        new Promise(resolve => setTimeout(() => resolve(null), 1000))
-    ]);
-}
-
 export function getProduct() {
     return sendMessage('get-donation-data').then(product => {
         var price = product.prices[0];
