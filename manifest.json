@@ -31,7 +31,7 @@
 			"38": "icons/browser-action.png"
 		}
 	},
-	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google-analytics.com https://*.carbonads.com; object-src 'self'",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google-analytics.com https://*.carbonads.com https://xrxbcfk.misosoup.io; object-src 'self'",
 	"web_accessible_resources": ["proxy"],
 	"manifest_version": 2,
 	"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsvIV42ru/pnDPEiGb5BJwg9ZfpjgtvmKTX9rGEsJpaWkTwxBJ9Eypb5S2TVMYzuiddUQi2T9KoMGO35EEyV6cBl4AXK2s9wXFs1CcnrXkKBQXa4DvcoaPy06gMTCcthPL0A58hraRPjFbpFYI2CKPQQzqfEf/QXyC06vtknh4Wn+9MmRZQBvev9YuUgos6I4fwiL3rkeeuKPC1UvSVPOh/tJsIPpT/MXlsV+pe71TNyATo7ArTKDa+aa+0bToVlLvXJkxiyVzKLXt1yzT8cFK1O8134f8gfKl7d/DSikfrGxuqPde0ou8uT/uUpHwlfayzpr8YFC/htz5W7RJ45ReQIDAQAB"
