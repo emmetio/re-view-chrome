@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "publish": "NODE_ENV=production gulp pack",
+    "watch": "gulp watch",
+    "build": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

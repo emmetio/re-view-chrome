@@ -1,7 +1,9 @@
 'use strict';
-import {default as reView, dispatch, subscribe, findBreakpoints, getStateValue, UI, APP, DONATION} from 'livestyle-re-view';
+import {default as reView, dispatch, subscribe, getStateValue, UI, APP, DONATION} from 'livestyle-re-view';
 import {throttle} from './lib/utils';
 import * as donation from './lib/donation';
+
+import findBreakpoints from './lib/find-breakpoints';
 
 const storage = chrome.storage.sync;
 const storageKey = 're-view2';
