@@ -3,11 +3,12 @@
   "version": "2.1.8",
   "description": "Emmet Re:view extension for Google Chrome",
   "main": "index.js",
+  "engines" : { "node" : "~8.10.0" },
   "scripts": {
-    "publish": "NODE_ENV=production gulp pack",
-    "watch": "gulp watch",
     "build": "gulp",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "publish": "NODE_ENV=production gulp pack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,13 @@
     "view"
   ],
   "author": "Sergey Chikuyonok <serge.che@gmail.com>",
+  "contributors": [
+    {
+      "name": "JamesCodesThings",
+      "email": "jamescodesthings@gmail.com",
+      "url": "https://github.com/jamescodesthings"
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/emmetio/re-view-chrome/issues"
