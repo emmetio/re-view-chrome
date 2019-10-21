@@ -1,6 +1,6 @@
 {
   "name": "re-view-chrome",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "Emmet Re:view extension for Google Chrome",
   "main": "index.js",
   "scripts": {
