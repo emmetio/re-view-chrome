@@ -8,7 +8,6 @@ const allowedFeatures = ['min-width', 'max-width'];
 export default function(doc=document, options={}) {
 
     var list = Array.from(doc.styleSheets);
-    console.log('list:',list);
     return Promise.all(list.map(ss => {
         // NB Check for own `.cssRules` property to bypass Chrome security
         // with external stylesheets
@@ -34,9 +33,7 @@ export default function(doc=document, options={}) {
     // flatten nested arrays of breakpoints
     .then(values => [].concat(...values.filter(Boolean)))
     .then((array) => {
-        console.log('Making unique', array);
         var uniqueArray = unique(array);
-        console.log('Unique', uniqueArray);
         return uniqueArray;
     })
     .then(optimize)
@@ -146,7 +143,6 @@ function parse(mq) {
 
 function readCSSOM(stylesheet, breakpoints=[]) {
     var rules = stylesheet.rules || stylesheet.cssRules;
-    console.log('Processing', stylesheet.href || stylesheet);
 
     // Have Found Media Query?
     var found = false;
@@ -167,7 +163,6 @@ function readCSSOM(stylesheet, breakpoints=[]) {
     }
 
     if(!found) console.warn('Did not find any media queries in', stylesheet.href || stylesheet);
-    if(breakpoints.length > 0) console.log('Found', breakpoints.length, ' breakpoints in ', stylesheet.href || stylesheet);
 
     return breakpoints;
 }
